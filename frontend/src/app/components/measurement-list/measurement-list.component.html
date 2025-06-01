@@ -1,0 +1,269 @@
+<div class="container">
+  <!-- Add Measurement Form -->
+  <div class="form-section">
+    <h2>Add Measurement</h2>
+    <div style="margin-bottom: 1rem">
+      <button mat-raised-button color="accent" (click)="fetchAllMeasurements()">
+        Fetch All Measurements
+      </button>
+    </div>
+    <button mat-raised-button color="primary" (click)="toggleAddMeasurement()">
+      Add Measurement
+    </button>
+
+    <div *ngIf="showAddMeasurement" class="form-toggle-section">
+      <form [formGroup]="measurementForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Patient ID</mat-label>
+          <input matInput formControlName="patientId" />
+          <mat-error
+            *ngIf="measurementForm.get('patientId')?.hasError('required')"
+            >Patient ID is required.</mat-error
+          >
+          <mat-error *ngIf="measurementForm.get('patientId')?.hasError('min')">
+            Patient ID must be a positive number.
+          </mat-error>
+          <mat-error
+            *ngIf="measurementForm.get('patientId')?.hasError('pattern')"
+          >
+            Patient ID must be a positive number and contain only digits.
+          </mat-error>
+          <mat-error
+            *ngIf="measurementForm.get('patientId')?.hasError('maxlength')"
+          >
+            Patient ID must be at most 18 characters long.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Measurement Result</mat-label>
+          <input matInput formControlName="result" />
+          <mat-error *ngIf="measurementForm.get('result')?.hasError('required')"
+            >Result is required.</mat-error
+          >
+          <mat-error *ngIf="measurementForm.get('result')?.hasError('pattern')">
+            Please enter a valid number. Decimals are allowed (e.g., 50, 75.5,
+            or 100.0).
+          </mat-error>
+          <mat-error *ngIf="measurementForm.get('result')?.hasError('min')"
+            >Result must be at least 50.0.</mat-error
+          >
+          <mat-error *ngIf="measurementForm.get('result')?.hasError('max')"
+            >Result must be at most 100.0.</mat-error
+          >
+        </mat-form-field>
+
+        <div class="submit-button-container">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="!measurementForm.valid"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div
+      *ngIf="successMessage"
+      [ngClass]="{
+        'success-message': !isErrorMessage,
+        'error-box': isErrorMessage
+      }"
+    >
+      {{ successMessage }}
+    </div>
+  </div>
+</div>
+
+<!-- Measurement Table -->
+<div class="table-container">
+  <ng-container *ngIf="filteredMeasurements$ | async as data">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Search by Patient ID</mat-label>
+      <input matInput [(ngModel)]="searchId" (ngModelChange)="searchById()" />
+    </mat-form-field>
+    <table
+      mat-table
+      [dataSource]="data"
+      class="mat-elevation-z8"
+      style="width: 100%; table-layout: fixed"
+    >
+      <!-- Patient ID Column -->
+      <ng-container matColumnDef="patientId">
+        <th mat-header-cell *matHeaderCellDef style="width: 30%">Patient ID</th>
+        <td mat-cell *matCellDef="let measurement">
+          <div style="width: 100%">
+            <ng-container
+              *ngIf="editableRow === measurement.uuid; else viewPatientId"
+            >
+              <form [formGroup]="editForms[measurement.uuid]">
+                <mat-form-field
+                  appearance="fill"
+                  style="width: 100%; margin: 0"
+                >
+                  <input
+                    matInput
+                    formControlName="patientId"
+                    style="width: 100%"
+                  />
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('patientId')
+                        ?.hasError('required')
+                    "
+                  >
+                    Patient ID is required.
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('patientId')
+                        ?.hasError('min')
+                    "
+                  >
+                    Patient ID must be a positive number.
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('patientId')
+                        ?.hasError('pattern')
+                    "
+                  >
+                    Patient ID must be a positive number and contain only
+                    digits.
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('patientId')
+                        ?.hasError('maxlength')
+                    "
+                  >
+                    Patient ID must be at most 18 characters long.
+                  </mat-error>
+                </mat-form-field>
+              </form>
+            </ng-container>
+            <ng-template #viewPatientId>{{
+              measurement.patientId
+            }}</ng-template>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Result Column -->
+      <ng-container matColumnDef="result">
+        <th mat-header-cell *matHeaderCellDef style="width: 30%">
+          Measurement
+        </th>
+        <td mat-cell *matCellDef="let measurement">
+          <div style="width: 100%">
+            <ng-container
+              *ngIf="editableRow === measurement.uuid; else viewResult"
+            >
+              <form [formGroup]="editForms[measurement.uuid]">
+                <mat-form-field
+                  appearance="fill"
+                  style="width: 100%; margin: 0"
+                >
+                  <input
+                    matInput
+                    formControlName="result"
+                    style="width: 100%"
+                  />
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('result')
+                        ?.hasError('required')
+                    "
+                  >
+                    Result is required.
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid]
+                        .get('result')
+                        ?.hasError('pattern')
+                    "
+                  >
+                    Please enter a valid number. Decimals are allowed (e.g., 50,
+                    75.5, or 100.0).
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid].get('result')?.hasError('min')
+                    "
+                  >
+                    Result must be at least 50.0.
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      editForms[measurement.uuid].get('result')?.hasError('max')
+                    "
+                  >
+                    Result must be at most 100.0.
+                  </mat-error>
+                </mat-form-field>
+              </form>
+            </ng-container>
+            <ng-template #viewResult>{{ measurement.result }}</ng-template>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef style="width: 40%">Actions</th>
+        <td mat-cell *matCellDef="let measurement">
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+            <ng-container
+              *ngIf="editableRow === measurement.uuid; else viewActions"
+            >
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="saveMeasurement(measurement)"
+              >
+                Save
+              </button>
+              <button mat-raised-button color="warn" (click)="onCancel()">
+                Cancel
+              </button>
+            </ng-container>
+            <ng-template #viewActions>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="editMeasurement(measurement.uuid)"
+              >
+                Edit
+              </button>
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="deleteMeasurement(measurement.uuid)"
+              >
+                Delete
+              </button>
+            </ng-template>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['patientId', 'result', 'actions']"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['patientId', 'result', 'actions']"
+      ></tr>
+    </table>
+  </ng-container>
+</div>

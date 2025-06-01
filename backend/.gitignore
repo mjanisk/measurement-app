@@ -1,0 +1,88 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Logs ###
+*.log
+logs/
+
+### OS-Specific ###
+.DS_Store
+Thumbs.db
+
+### Security ###
+.env
+*.key
+*.pem
+*.crt
+
+### Docker ###
+docker-compose.override.yml
+.docker/
+
+### Testing ###
+/test-output/
+
+# Build and Dependency Files
+/target/
+/build/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE and Editor Files
+.classpath
+.project
+.settings/
+.factorypath
+
+# Logs and Temporary Files
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+
+# Environment and Configuration Files
+.env
+.env.*
+
+# Maven Wrapper Files
+.mvn/
+mvnw
+mvnw.cmd
+
+# Operating System Files
+.DS_Store
+Thumbs.db

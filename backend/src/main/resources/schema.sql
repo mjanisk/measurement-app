@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS measurements (
+    id SERIAL PRIMARY KEY,
+    patient_id BIGINT NOT NULL,
+    result DOUBLE PRECISION NOT NULL,
+    uuid UUID NOT NULL UNIQUE
+);
